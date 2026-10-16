@@ -18,7 +18,9 @@ src/
   build_datasets.py    原始数据 -> 市场、个股、委托类结果（9 个 JSON）
   factor_research.py   12 个因子、逐股 IC、岭回归组合、分档收益（3 个 JSON）
   summary.py           从结果 JSON 打印本 README 引用的数字
+  make_figures.py      从结果 JSON 绘制 figures/ 下的 4 张图
 output/                脚本生成的结果，每个文件是行对象数组
+figures/               汇总图（下跌的时间结构、因子 IC、挂单存活时间、价差与股价）
 dashboard/index.html   交互式仪表板页面源码（见下文说明）
 data/                  放原始 parquet（未随仓库提供）
 ```
@@ -32,7 +34,10 @@ pip install -r requirements.txt
 python src/build_datasets.py --data-dir data --out-dir output
 python src/factor_research.py --data-dir data --out-dir output
 python src/summary.py output
+python src/make_figures.py output figures
 ```
+
+`summary.py` 和 `make_figures.py` 只读 `output/`，不需要原始数据，克隆仓库后可以直接运行。作图默认使用 macOS 自带的中文字体（Hiragino Sans GB），其他系统需要在脚本开头的 `font.family` 里换成本机已有的中文字体。
 
 换一个交易日用 `--date YYYYMMDD`。仓库里的 `output/` 就是用以上命令生成的。
 
