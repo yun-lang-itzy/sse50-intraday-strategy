@@ -1,0 +1,8 @@
+# raw Level-2 data (not distributed)
+data/*.parquet
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store

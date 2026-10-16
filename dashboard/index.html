@@ -1,0 +1,1020 @@
+<style>
+#dash-root .sx { font-family: var(--font-anthropic-sans); --sx-up: #d93a3a; --sx-down: #0f8a4a; --sx-mid: #e9e8e4; --sx-pos: #c63b3a; --sx-neg: #2a6fc4; display: grid; gap: var(--cds-gap-lg); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #dash-root .sx { --sx-up: #ef6b6b; --sx-down: #3cb371; --sx-mid: #3a3a37; --sx-pos: #e06463; --sx-neg: #5b9ae8; } }
+:root[data-theme="dark"] #dash-root .sx { --sx-up: #ef6b6b; --sx-down: #3cb371; --sx-mid: #3a3a37; --sx-pos: #e06463; --sx-neg: #5b9ae8; }
+.sx-head { display: grid; gap: var(--cds-gap-xs); }
+.sx-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+.sx-take { margin: 0; color: var(--color-fg-muted); max-width: 70ch; line-height: 1.6; }
+.sx .sx-take b, .sx .sx-kpi b { font-weight: 500; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.sx-tabs { display: flex; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); flex-wrap: wrap; }
+.sx-tabs button { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
+.sx-tabs button[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+.sx-tabs button:focus-visible, .sx-table th button:focus-visible, .sx-table tr:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.sx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-md); }
+.sx-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+.sx-kpi span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.sx .sx-kpi b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+.sx-kpi small { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.sx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.sx-card { position: relative; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
+.sx-card.sx-wide { grid-column: 1 / -1; }
+.sx-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.sx-card p { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+.sx-chart { min-height: 220px; }
+.sx-chart svg { display: block; overflow: visible; }
+.sx-tick { font-size: 11px; fill: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.sx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.sx-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.sx-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; display: grid; gap: 2px; }
+.sx-tip .h { color: var(--cds-text-secondary); }
+.sx-tip i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+.sx-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.sx-ins h2 { text-wrap: balance; }
+.sx-ins p b { font-weight: 500; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.sx-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.sx-pair h3 { margin: 0 0 var(--cds-gap-xs); font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); }
+.sx-note { background: none; border-style: dashed; }
+.sx-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.sx-seg button { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 0; padding: var(--cds-pad-xs) var(--cds-pad-sm); color: var(--color-fg-muted); cursor: pointer; }
+.sx-seg button[aria-pressed="true"] { background: var(--color-bg); color: var(--color-fg); }
+.sx-seg button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.sx-tools input, .sx-tools select { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: 0; }
+.sx-tablebox { max-height: 34rem; overflow: auto; }
+.sx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.sx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: right; border-bottom: 1px solid var(--color-border-line); padding: 0; }
+.sx-table th button { font: inherit; color: var(--color-fg-muted); background: none; border: 0; padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; width: 100%; text-align: inherit; white-space: nowrap; }
+.sx-table td { text-align: right; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.sx-table th:nth-child(-n+2), .sx-table td:nth-child(-n+2) { text-align: left; }
+.sx-table tbody tr { cursor: pointer; }
+.sx-table tbody tr:hover { background: var(--color-bg); }
+.sx .up { color: var(--sx-up); } .sx .down { color: var(--sx-down); }
+.sx-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.sx-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.sx-ramp { display: flex; align-items: center; gap: 8px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.sx-ramp span { width: 140px; max-width: 40%; height: 10px; border-radius: 2px; }
+.sx-heat { position: relative; min-height: 640px; }
+.sx-heat canvas { display: block; width: 100%; cursor: crosshair; }
+.sx-tm text { pointer-events: none; }
+@media (max-width: 640px) { .sx-hide-narrow { display: none; } }
+</style>
+
+<div class="sx">
+  <header class="sx-head">
+    <h1 id="title">上证50 Level-2 · 2026-09-23</h1>
+    <p class="sx-take">50 只成分股中 <b data-source="kpi" data-field="up" data-row="0">—</b> 只上涨、<b data-source="kpi" data-field="down" data-row="0">—</b> 只下跌，等权平均涨跌 <b data-source="kpi" data-field="ew_ret_pct" data-row="0">—</b>%，全天成交 <b data-source="kpi" data-field="amount_yi" data-row="0">—</b> 亿元；超大单（单笔主动委托 ≥100 万元）净买入 <b data-source="kpi" data-field="xlarge_net_yi" data-row="0">—</b> 亿元。</p>
+  </header>
+
+  <nav class="sx-tabs" role="tablist" aria-label="页面">
+    <button id="tab-overview" role="tab" aria-selected="true" data-tab="overview">市场总览</button>
+    <button id="tab-stock" role="tab" aria-selected="false" data-tab="stock">个股透视</button>
+    <button id="tab-micro" role="tab" aria-selected="false" data-tab="micro">委托与流动性</button>
+    <button id="tab-insights" role="tab" aria-selected="false" data-tab="insights">分析结论</button>
+    <button id="tab-factors" role="tab" aria-selected="false" data-tab="factors">因子预测</button>
+  </nav>
+
+  <section id="overview" class="sx-page" style="display:grid;gap:var(--cds-gap-md)">
+    <div class="sx-kpis">
+      <div class="sx-kpi"><span>全天成交额（亿元）</span><b data-source="kpi" data-field="amount_yi" data-row="0">—</b><small>含开盘、收盘集合竞价，不含盘后</small></div>
+      <div class="sx-kpi"><span>等权平均涨跌（%）</span><b data-source="kpi" data-field="ew_ret_pct" data-row="0">—</b><small>收盘价相对昨收</small></div>
+      <div class="sx-kpi"><span>主动净买入（亿元）</span><b data-source="kpi" data-field="net_buy_yi" data-row="0">—</b><small>连续竞价外盘减内盘</small></div>
+      <div class="sx-kpi"><span>逐笔成交（万笔）</span><b data-source="kpi" data-field="trades_wan" data-row="0">—</b><small>50 只股票合计</small></div>
+      <div class="sx-kpi"><span>撤单量 / 挂单量（%）</span><b data-source="kpi" data-field="cancel_pct" data-row="0">—</b><small>全部新增与撤销委托</small></div>
+    </div>
+    <div class="sx-grid">
+      <div class="sx-card sx-wide" id="card-ew"><h2>等权组合日内走势</h2><p>50 只成分股每分钟最新成交价相对昨收的平均涨跌（%）。午休被压缩，横轴按交易分钟排列。</p><div class="sx-chart dash-skeleton" id="ch-ew" data-source="market_minute"></div></div>
+      <div class="sx-card sx-wide" id="card-breadth"><h2>市场宽度</h2><p>每分钟最新成交价高于、低于昨收的成分股家数。</p><div class="sx-legend" id="lg-breadth"></div><div class="sx-chart dash-skeleton" id="ch-breadth" data-source="market_minute"></div></div>
+      <div class="sx-card sx-wide" id="card-amt"><h2>每分钟成交额</h2><p>亿元。开盘后与收盘前放量，午盘清淡，呈典型的 U 形。</p><div class="sx-legend" id="lg-amt"></div><div class="sx-chart dash-skeleton" id="ch-amt" data-source="market_minute"></div></div>
+      <div class="sx-card sx-wide" id="card-tm"><h2>申万一级行业云图</h2><p>面积为全天成交额，颜色为涨跌幅（红涨绿跌）；行业标题后为成分股数量和等权涨跌。19 个行业中多数只有 1–2 只成分股，行业涨跌基本就是个股涨跌，不宜据此判断行业走势。点击个股查看详情。</p><div class="sx-ramp" id="rp-tm"></div><div class="sx-chart dash-skeleton" id="ch-tm" data-source="stocks industry" style="min-height:460px"></div></div>
+      <div class="sx-card sx-wide" id="card-heat"><h2>个股日内涨跌热力图</h2><p>每格为某只股票在该分钟相对昨收的涨跌幅。按申万一级行业分组，组内按收盘涨跌排序。</p><div class="sx-ramp" id="rp-heat"></div><div class="sx-heat dash-skeleton" id="ch-heat" data-source="minute stocks"></div></div>
+      <div class="sx-card sx-wide" id="card-cumcls"><h2>分档主动资金日内累计</h2><p>50 只合计，连续竞价时段逐分钟累加外盘减内盘（亿元）。分档按主动单全天总金额。</p><div class="sx-legend" id="lg-cumcls"></div><div class="sx-chart dash-skeleton" id="ch-cumcls" data-source="flow_minute" style="min-height:260px"></div></div>
+      <div class="sx-card" id="card-ret"><h2>个股涨跌幅</h2><p>按涨跌幅排序（%），红涨绿跌。点击条形查看个股。</p><div class="sx-chart dash-skeleton" id="ch-ret" data-source="stocks"></div></div>
+      <div class="sx-card" id="card-flow"><h2>主动资金按单笔规模</h2><p>把逐笔成交按主动方委托号合并为一笔“主动单”，按金额分档后求外盘减内盘（亿元）。</p><div class="sx-chart dash-skeleton" id="ch-flow" data-source="flow_cls" style="min-height:160px"></div></div>
+      <div class="sx-card sx-wide" id="card-table"><h2>成分股明细</h2><p>点击行进入个股透视。表头可排序。</p>
+        <div class="sx-tools"><input id="sx-q" type="search" placeholder="搜索代码或名称" aria-label="搜索代码或名称"></div>
+        <div class="sx-tablebox"><table class="sx-table" id="tbl" data-source="stocks" data-row-key="code"><thead><tr>
+          <th data-field="code"><button data-k="code">代码</button></th>
+          <th data-field="name"><button data-k="name">名称</button></th>
+          <th data-field="close"><button data-k="close">收盘</button></th>
+          <th data-field="ret_pct"><button data-k="ret_pct">涨跌 %</button></th>
+          <th data-field="amount_yi"><button data-k="amount_yi">成交额 亿</button></th>
+          <th data-field="net_buy_yi"><button data-k="net_buy_yi">主动净买 亿</button></th>
+          <th data-field="net_xlarge_yi" class="sx-hide-narrow"><button data-k="net_xlarge_yi">超大单净买 亿</button></th>
+          <th data-field="trades" class="sx-hide-narrow"><button data-k="trades">成交笔数</button></th>
+          <th data-field="cancel_pct" class="sx-hide-narrow"><button data-k="cancel_pct">撤单率 %</button></th>
+          <th data-field="spread_bps" class="sx-hide-narrow"><button data-k="spread_bps">价差 bp</button></th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stock" class="sx-page" style="display:none;gap:var(--cds-gap-md)">
+    <div class="sx-tools"><label for="sx-stock">股票</label><select id="sx-stock" data-source="stocks"></select></div>
+    <div class="sx-kpis" id="stock-kpis">
+      <div class="sx-kpi"><span>收盘价（元）</span><b data-source="stocks" data-field="close">—</b><small id="sk-pre"></small></div>
+      <div class="sx-kpi"><span>涨跌幅（%）</span><b data-source="stocks" data-field="ret_pct">—</b><small id="sk-range"></small></div>
+      <div class="sx-kpi"><span>成交额（亿元）</span><b data-source="stocks" data-field="amount_yi">—</b><small id="sk-trades"></small></div>
+      <div class="sx-kpi"><span>主动净买入（亿元）</span><b data-source="stocks" data-field="net_buy_yi">—</b><small id="sk-xl"></small></div>
+      <div class="sx-kpi"><span>平均买卖价差（bp）</span><b data-source="stocks" data-field="spread_bps">—</b><small id="sk-tick"></small></div>
+    </div>
+    <div class="sx-grid">
+      <div class="sx-card sx-wide" id="card-px"><h2>分钟价格与均价</h2><p>每分钟最后成交价与累计成交均价（VWAP），虚线为昨收。</p><div class="sx-legend" id="lg-px"></div><div class="sx-chart dash-skeleton" id="ch-px" data-source="minute stocks"></div></div>
+      <div class="sx-card sx-wide" id="card-bs"><h2>每分钟主动买卖</h2><p>外盘（主动买）向上、内盘（主动卖）向下，万元。集合竞价成交没有方向，不计入。</p><div class="sx-chart dash-skeleton" id="ch-bs" data-source="minute"></div></div>
+      <div class="sx-card" id="card-cum"><h2>累计主动净买入</h2><p>万元，自 9:30 起累加。</p><div class="sx-chart dash-skeleton" id="ch-cum" data-source="cum_flow"></div></div>
+      <div class="sx-card" id="card-spr"><h2>买卖价差</h2><p>每分钟快照的一档价差均值（bp），仅连续竞价时段。</p><div class="sx-chart dash-skeleton" id="ch-spr" data-source="minute"></div></div>
+      <div class="sx-card" id="card-book"><h2>全天平均十档深度</h2><p id="book-note">连续竞价时段所有快照的各档平均挂单量，单位：手。卖盘在上，买盘在下。</p><div class="sx-chart dash-skeleton" id="ch-book" data-source="depth" style="min-height:380px"></div></div>
+      <div class="sx-card" id="card-vap"><h2>成交价位分布</h2><p>全天成交额按价格分 30 档，红为主动买、绿为主动卖，灰为集合竞价（万元）。</p><div class="sx-chart dash-skeleton" id="ch-vap" data-source="vap" style="min-height:380px"></div></div>
+    </div>
+  </section>
+
+  <section id="insights" class="sx-page sx-ins" style="display:none;gap:var(--cds-gap-md)">
+    <div class="sx-grid">
+      <div class="sx-card" id="ins-path"><h2>下跌贯穿全天，中途没有反弹</h2>
+        <p>等权组合 9:30 为 <b data-source="path" data-field="open_pct" data-row="0">—</b>%，午盘 <b data-source="path" data-field="noon_pct" data-row="0">—</b>%，<b data-source="path" data-field="low_t" data-row="0">—</b> 触及全天最低 <b data-source="path" data-field="low_pct" data-row="0">—</b>%，收盘 <b data-source="path" data-field="close_pct" data-row="0">—</b>%。上午主动净买入 <b data-source="path" data-field="am_net_yi" data-row="0">—</b> 亿元，下午 <b data-source="path" data-field="pm_net_yi" data-row="0">—</b> 亿元，两段卖压几乎相同，不像单一消息造成的冲击。</p>
+        <div class="sx-chart dash-skeleton" id="ci-path" data-source="market_minute"></div></div>
+      <div class="sx-card" id="ins-size"><h2>这一天大单净卖出，小单净买入</h2>
+        <p>各档主动单 50 只合计净买入（亿元）。这是当天的资金分布，不代表大单能预示涨跌：只有一天、50 只股票，各档与涨跌的相关区分不开；单笔规模也不等于投资者类型，机构算法会拆单。</p>
+        <div class="sx-chart dash-skeleton" id="ci-size-net" data-source="xs_corr" style="min-height:130px"></div></div>
+      <div class="sx-card" id="ins-conc"><h2>资金集中在电子行业，科创板跌得更多</h2>
+        <p>成交额前 5 名（<b data-source="concentration" data-field="top5_names" data-row="0">—</b>）占 50 只总成交额的 <b data-source="concentration" data-field="top5_share_pct" data-row="0">—</b>%。科创板成交占 <b data-source="concentration" data-field="star_share_pct" data-row="0">—</b>%，平均涨跌 <b data-source="concentration" data-field="star_ret_pct" data-row="0">—</b>%，主板 <b data-source="concentration" data-field="main_ret_pct" data-row="0">—</b>%。行业分布见"市场总览"的行业云图。</p></div>
+      <div class="sx-card" id="ins-imb"><h2>这一天，盘口买盘较厚的股票跌得更多</h2>
+        <p>每点一只股票。横轴为全天平均前五档盘口不平衡（买量减卖量，除以两者之和），纵轴为涨跌幅；秩相关 <b data-source="xs_corr" data-field="rank_corr" data-where="signal=盘口不平衡">—</b>。这与限价买单在下方被动承接卖压一致。样本只有一天 50 只，是当天的观察，不宜当作规律。</p>
+        <div class="sx-chart dash-skeleton" id="ci-imb" data-source="stocks" style="min-height:280px"></div></div>
+      <div class="sx-card" id="ins-tick"><h2>低价股的价差被 0.01 元最小价位卡住</h2>
+        <p><b data-source="tick" data-field="n_tick" data-row="0">—</b> / <b data-source="tick" data-field="n" data-row="0">—</b> 只股票的平均价差不超过 1.1 个最小价位。股价越低，同样 1 个价位折算的 bp 越大，这部分价差反映的是价格水平而不是流动性。这类股票成交主要靠在买一、卖一排队。</p>
+        <div class="sx-legend" id="lg-tick"></div><div class="sx-chart dash-skeleton" id="ci-tick" data-source="stocks" style="min-height:280px"></div></div>
+      <div class="sx-card" id="ins-life"><h2>科创板的挂单撤得快得多</h2>
+        <p>撤单挂单从挂出到撤销的时间。主板中位数 <b data-source="lifetime_stats" data-field="median_s" data-where="board=主板">—</b> 秒，10 秒内撤掉 <b data-source="lifetime_stats" data-field="within_10s_pct" data-where="board=主板">—</b>%；科创板中位数 <b data-source="lifetime_stats" data-field="median_s" data-where="board=科创板">—</b> 秒，10 秒内 <b data-source="lifetime_stats" data-field="within_10s_pct" data-where="board=科创板">—</b>%。科创板算法报价更活跃，盘口深度更容易一闪而过。</p>
+        <div class="sx-legend" id="lg-life"></div><div class="sx-chart dash-skeleton" id="ci-life" data-source="lifetime" style="min-height:260px"></div></div>
+      <div class="sx-card sx-note" id="ins-caveat"><h2>使用这些结论时</h2>
+        <p>样本只有 2026-09-23 一个交易日、50 只股票，以上是线索而不是规律。要检验它们是否稳定，需要加入更多交易日；要研究更短周期的可预测性，可以把分钟换成 5–10 秒窗口，或用逐笔委托和成交重建完整订单簿。</p></div>
+    </div>
+  </section>
+
+  <section id="factors" class="sx-page sx-ins" style="display:none;gap:var(--cds-gap-md)">
+    <div class="sx-card sx-wide" id="fac-intro"><h2>盘口微观结构因子能预测多远的价格</h2>
+      <p>在每张 3 秒行情快照上计算 12 个因子，预测未来 3 秒到 300 秒的中间价变化。每只股票单独计算 Pearson IC，再对 50 只等权平均。时间切分：上午为训练段，13:00–14:00 为验证段，14:00–14:57 为尾段留出，只用于检验。快照间隔 3 秒，所以最短周期是 3 秒而不是 1 秒。</p>
+      <p>12 因子岭回归组合在尾段留出的 IC 为 <b data-source="composite_ic" data-field="ic_holdout" data-where="horizon_s=3">—</b>（3 秒）至 <b data-source="composite_ic" data-field="ic_holdout" data-where="horizon_s=60">—</b>（60 秒），验证段为 <b data-source="composite_ic" data-field="ic_valid" data-where="horizon_s=3">—</b> 至 <b data-source="composite_ic" data-field="ic_valid" data-where="horizon_s=60">—</b>，样本外没有衰减。</p>
+      <p>只展示 3–60 秒。尾段留出只有 57 分钟，180 秒、300 秒周期每只股票的不重叠样本只有十几个，结果不可靠，因此不展示。</p></div>
+    <div class="sx-grid">
+      <div class="sx-card sx-wide" id="fac-heat"><h2>因子与未来中间价变化的相关系数</h2>
+        <p>逐股 Pearson IC 等权均值。红色为正相关，蓝色为负相关。切换时间段可以比较样本内外是否稳定。</p>
+        <div class="sx-tools"><div class="sx-seg" role="group" aria-label="时间段"><button data-seg="train" aria-pressed="false">训练段</button><button data-seg="valid" aria-pressed="false">验证段</button><button data-seg="holdout" aria-pressed="true">尾段留出</button></div><div class="sx-ramp" id="rp-fac"></div></div>
+        <div class="sx-chart dash-skeleton" id="cf-heat" data-source="factor_ic" style="min-height:400px"></div></div>
+      <div class="sx-card" id="fac-horizon"><h2>预测关联随时间尺度如何变化</h2>
+        <p>尾段留出的 IC。组合在各周期都高于任何单因子；一档量差、微价偏离随周期变长而减弱，十档加权量差反而增强。</p>
+        <div class="sx-legend" id="lg-fh"></div><div class="sx-chart dash-skeleton" id="cf-horizon" data-source="factor_ic composite_ic" style="min-height:260px"></div></div>
+      <div class="sx-card" id="fac-q"><h2>组合信号分五档后的未来 30 秒收益</h2>
+        <p>每只股票内按 30 秒组合得分分五档，看未来 30 秒中间价平均变化（bp）。最高档减最低档：验证段 <b data-source="q_spread" data-field="spread_bps" data-where="segment=验证段">—</b> bp，尾段留出 <b data-source="q_spread" data-field="spread_bps" data-where="segment=尾段留出">—</b> bp，小于多数股票的买卖价差，主动吃单难以覆盖成本，更适合用来择时挂单。</p>
+        <div class="sx-legend" id="lg-fq"></div><div class="sx-chart dash-skeleton" id="cf-q" data-source="composite_quintile" style="min-height:260px"></div></div>
+      <div class="sx-card sx-note" id="fac-note"><h2>读这些数字时</h2>
+        <p>盘口类因子的高 IC 有相当部分是机械的：一档挂单越薄的一侧越容易被吃光，中间价随之移动。这不等于可以盈利的信号。组合只用了一个交易日，训练、验证、留出都在同一天，跨日稳定性还需要更多数据检验。</p></div>
+    </div>
+  </section>
+
+  <section id="micro" class="sx-page" style="display:none;gap:var(--cds-gap-md)">
+    <div class="sx-grid">
+      <div class="sx-card sx-wide" id="card-oc"><h2>每分钟新增与撤销委托</h2><p>逐笔委托中的新增（A）与撤单（D）笔数，50 只合计。上交所逐笔委托只发布未立即成交的部分。</p><div class="sx-legend" id="lg-oc"></div><div class="sx-chart dash-skeleton" id="ch-oc" data-source="market_minute"></div></div>
+      <div class="sx-card" id="card-osz"><h2>新增委托规模分布</h2><p>按委托数量分档的笔数（万笔）。1 手 = 100 股。</p><div class="sx-legend" id="lg-osz"></div><div class="sx-chart dash-skeleton" id="ch-osz" data-source="order_size"></div></div>
+      <div class="sx-card sx-wide" id="card-mspr"><h2>市场平均价差日内变化</h2><p>50 只成分股每分钟平均一档价差（bp）。开盘最宽，随后迅速收窄。</p><div class="sx-chart dash-skeleton" id="ch-mspr" data-source="market_minute"></div></div>
+    </div>
+  </section>
+</div>
+
+<script>
+dash.calc('kpi', {
+  title: '全市场汇总',
+  description: '50 只股票的成交额、涨跌家数、等权涨跌、主动净买入和撤单率。',
+  inputs: ['stocks'],
+  fn: (stocks) => {
+    const sum = (k) => stocks.reduce((a, r) => a + Number(r[k]), 0);
+    return [{
+      amount_yi: +(sum('amount') / 1e8).toFixed(2),
+      up: stocks.filter((r) => r.ret_pct > 0).length,
+      down: stocks.filter((r) => r.ret_pct < 0).length,
+      ew_ret_pct: +(sum('ret_pct') / stocks.length).toFixed(2),
+      net_buy_yi: +(sum('net_buy') / 1e8).toFixed(2),
+      xlarge_net_yi: +(sum('net_xlarge') / 1e8).toFixed(2),
+      trades_wan: +(sum('trades') / 1e4).toFixed(1),
+      cancel_pct: +(sum('cancels') / sum('orders') * 100).toFixed(1),
+    }];
+  },
+});
+dash.calc('flow_cls', {
+  title: '按单笔规模的主动净买入',
+  description: '各档主动单的外盘减内盘，50 只合计（亿元）。',
+  inputs: ['stocks'],
+  fn: (stocks) => [
+    ['超大单 ≥100万', 'net_xlarge'], ['大单 20–100万', 'net_large'],
+    ['中单 4–20万', 'net_medium'], ['小单 <4万', 'net_small'],
+  ].map(([cls, k]) => ({ cls, net_yi: +(stocks.reduce((a, r) => a + r[k], 0) / 1e8).toFixed(2) })),
+});
+dash.calc('industry', {
+  title: '申万一级行业汇总',
+  description: '按申万一级行业汇总成分股家数、成交额与等权涨跌。',
+  inputs: ['stocks'],
+  fn: (stocks) => [...new Set(stocks.map((r) => r.industry))].map((industry) => {
+    const g = stocks.filter((r) => r.industry === industry);
+    return {
+      industry, n: g.length,
+      amount_yi: +(g.reduce((a, r) => a + r.amount, 0) / 1e8).toFixed(2),
+      ew_ret_pct: +(g.reduce((a, r) => a + r.ret_pct, 0) / g.length).toFixed(2),
+      net_buy_yi: +(g.reduce((a, r) => a + r.net_buy, 0) / 1e8).toFixed(2),
+    };
+  }),
+});
+dash.calc('path', {
+  title: '等权组合日内路径',
+  description: '等权涨跌的关键时点与全天最低点，以及上午、下午的主动净买入。',
+  inputs: ['market_minute'],
+  fn: (market_minute) => {
+    const at = (t) => market_minute.find((r) => r.t === t).ew_ret_pct;
+    const low = market_minute.reduce((a, r) => (r.ew_ret_pct < a.ew_ret_pct ? r : a));
+    const net = (f) => +(market_minute.filter(f).reduce((a, r) => a + r.net_buy, 0) / 1e8).toFixed(1);
+    return [{
+      open_pct: +at('09:30').toFixed(2), noon_pct: +at('11:29').toFixed(2), close_pct: +at('15:00').toFixed(2),
+      low_t: low.t, low_pct: +low.ew_ret_pct.toFixed(2),
+      am_net_yi: net((r) => r.t < '12:00'), pm_net_yi: net((r) => r.t > '12:00'),
+    }];
+  },
+});
+dash.calc('xs_corr', {
+  title: '资金信号与涨跌的秩相关',
+  description: '各档主动净买入占成交额比例、盘口不平衡，分别与个股涨跌幅的 Spearman 秩相关。',
+  inputs: ['stocks'],
+  fn: (stocks) => {
+    const rank = (a) => {
+      const s = a.map((v, i) => [v, i]).sort((x, y) => x[0] - y[0]), r = [];
+      for (let i = 0; i < s.length;) { let j = i; while (j + 1 < s.length && s[j + 1][0] === s[i][0]) j++; for (let k = i; k <= j; k++) r[s[k][1]] = (i + j) / 2; i = j + 1; }
+      return r;
+    };
+    const corr = (a, b) => {
+      const ma = a.reduce((x, y) => x + y, 0) / a.length, mb = b.reduce((x, y) => x + y, 0) / b.length;
+      let sab = 0, saa = 0, sbb = 0;
+      a.forEach((v, i) => { sab += (v - ma) * (b[i] - mb); saa += (v - ma) ** 2; sbb += (b[i] - mb) ** 2; });
+      return sab / Math.sqrt(saa * sbb);
+    };
+    const ret = rank(stocks.map((r) => r.ret_pct));
+    const sp = (f) => +corr(rank(stocks.map(f)), ret).toFixed(2);
+    const size = [['超大单 ≥100万', 'net_xlarge'], ['大单 20–100万', 'net_large'], ['中单 4–20万', 'net_medium'], ['小单 <4万', 'net_small']]
+      .map(([signal, k]) => ({ signal, kind: 'size', net_yi: +(stocks.reduce((a, r) => a + r[k], 0) / 1e8).toFixed(2), rank_corr: sp((r) => r[k] / r.amount) }));
+    return [...size,
+      { signal: '全部主动净买入', kind: 'other', net_yi: +(stocks.reduce((a, r) => a + r.net_buy, 0) / 1e8).toFixed(2), rank_corr: sp((r) => r.net_buy / r.amount) },
+      { signal: '盘口不平衡', kind: 'other', net_yi: null, rank_corr: sp((r) => r.imbalance) }];
+  },
+});
+dash.calc('concentration', {
+  title: '成交集中度',
+  description: '成交额前 5 名占比，以及科创板与主板的成交占比和平均涨跌。',
+  inputs: ['stocks'],
+  fn: (stocks) => {
+    const tot = stocks.reduce((a, r) => a + r.amount, 0);
+    const top = [...stocks].sort((a, b) => b.amount - a.amount).slice(0, 5);
+    const star = stocks.filter((r) => r.board === '科创板'), main = stocks.filter((r) => r.board !== '科创板');
+    const avg = (g) => +(g.reduce((a, r) => a + r.ret_pct, 0) / g.length).toFixed(2);
+    return [{
+      top5_names: top.map((r) => r.name).join('、'),
+      top5_share_pct: +(top.reduce((a, r) => a + r.amount, 0) / tot * 100).toFixed(1),
+      star_share_pct: +(star.reduce((a, r) => a + r.amount, 0) / tot * 100).toFixed(1),
+      star_ret_pct: avg(star), main_ret_pct: avg(main),
+    }];
+  },
+});
+dash.calc('tick', {
+  title: '受最小价位约束的股票数',
+  description: '平均一档价差不超过 1.1 个最小价位（0.01 元）的股票数量。',
+  inputs: ['stocks'],
+  fn: (stocks) => [{ n_tick: stocks.filter((r) => r.spread_ticks <= 1.1).length, n: stocks.length }],
+});
+dash.calc('q_spread', {
+  title: '组合信号多空档差',
+  description: '30 秒组合得分最高档减最低档的未来 30 秒中间价变化（bp）。',
+  inputs: ['composite_quintile'],
+  fn: (composite_quintile) => ['验证段', '尾段留出'].map((segment) => {
+    const g = composite_quintile.filter((r) => r.segment === segment);
+    const at = (q) => g.find((r) => r.quintile === q).ret_bps;
+    return { segment, spread_bps: +(at(5) - at(1)).toFixed(2) };
+  }),
+});
+dash.calc('cum_flow', {
+  title: '累计主动净买入',
+  description: '每只股票按分钟累加外盘减内盘（万元）。',
+  inputs: ['minute'],
+  fn: (minute) => {
+    const acc = {};
+    return minute.map((r) => {
+      acc[r.code] = (acc[r.code] || 0) + r.buy_amt - r.sell_amt;
+      return { code: r.code, t: r.t, cum_net_wan: Math.round(acc[r.code] / 1e4) };
+    });
+  },
+});
+
+(() => {
+  const root = document.querySelector('.sx');
+  const $ = (s) => root.querySelector(s);
+  const C = (i) => dash.colors[i];
+  const UP = 'var(--sx-up)', DOWN = 'var(--sx-down)', MUTED = 'var(--cds-chart-muted)';
+  const f2 = d3.format(',.2f'), f0 = d3.format(','), f1 = d3.format(',.1f');
+  const sgn = (v, f) => (v > 0 ? '+' : '') + f(v);
+  const dir = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
+  let tab = 'overview';
+  let sortKey = 'amount_yi', sortDir = -1;
+
+  // ---------- helpers ----------
+  const W = (el) => Math.max(260, el.clientWidth);
+  function svgIn(el, h) {
+    el.replaceChildren();
+    el.classList.remove('dash-skeleton');
+    return d3.select(el).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${W(el)} ${h}`);
+  }
+  function textW(svg, s) {
+    const t = svg.append('text').attr('class', 'sx-tick').text(s);
+    const w = t.node().getComputedTextLength(); t.remove(); return w;
+  }
+  function state(el, id) {
+    const st = dash.data(id).status;
+    if (st === 'ok') return true;
+    el.replaceChildren();
+    if (st === 'error') { el.classList.remove('dash-skeleton'); const d = document.createElement('div'); d.className = 'sx-fail'; d.textContent = 'Failed to load'; el.append(d); }
+    else el.classList.add('dash-skeleton');
+    return false;
+  }
+  function legend(el, items) {
+    el.replaceChildren(...items.map(([name, color]) => {
+      const s = document.createElement('span'); const i = document.createElement('i'); i.style.background = color; s.append(i, name); return s;
+    }));
+  }
+  function tip(card) {
+    let t = card.querySelector(':scope > .sx-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'sx-tip'; t.hidden = true; card.append(t); }
+    return {
+      show(ev, head, lines) {
+        const h = document.createElement('div'); h.className = 'h'; h.textContent = head;
+        t.replaceChildren(h, ...lines.map(([name, val, color]) => {
+          const d = document.createElement('div');
+          if (color) { const i = document.createElement('i'); i.style.background = color; d.append(i); }
+          d.append(name ? name + '  ' + val : val); return d;
+        }));
+        t.hidden = false;
+        const r = card.getBoundingClientRect();
+        let x = ev.clientX - r.left + 14, y = ev.clientY - r.top + 14;
+        if (x + t.offsetWidth > r.width - 4) x = ev.clientX - r.left - t.offsetWidth - 14;
+        if (y + t.offsetHeight > r.height - 4) y = ev.clientY - r.top - t.offsetHeight - 14;
+        t.style.left = Math.max(4, x) + 'px'; t.style.top = Math.max(4, y) + 'px';
+      },
+      hide() { t.hidden = true; },
+    };
+  }
+  function yGrid(svg, y, ticks, fmt, x0, x1) {
+    const g = svg.append('g');
+    ticks.forEach((v) => {
+      g.append('line').attr('x1', x0).attr('x2', x1).attr('y1', y(v)).attr('y2', y(v)).style('stroke', v === 0 ? 'var(--cds-chart-axis)' : 'var(--cds-chart-grid)');
+      g.append('text').attr('class', 'sx-tick').attr('x', x0 - 6).attr('y', y(v)).attr('dy', '0.32em').attr('text-anchor', 'end').text(fmt(v));
+    });
+  }
+
+  // Time series over trading minutes. series: {name, color, val, type:'line'|'bar', colorOf?, fmt}
+  function timeChart(el, o) {
+    const rows = o.rows, h = o.h || 220, w = W(el);
+    const svg = svgIn(el, h);
+    const vals = [];
+    o.series.forEach((s) => rows.forEach((r) => { const v = s.val(r); if (v != null && isFinite(v)) vals.push(v); }));
+    if (o.zero) vals.push(0);
+    if (o.ref != null) vals.push(o.ref);
+    const y = d3.scaleLinear().domain(d3.extent(vals)).nice(4);
+    const ticks = y.ticks(4);
+    const ml = Math.ceil(d3.max(ticks, (t) => textW(svg, o.yfmt(t)))) + 10, mr = 6, mt = 8, mb = 22;
+    y.range([h - mb, mt]);
+    const hasBar = o.series.some((s) => s.type === 'bar');
+    const x = d3.scaleBand().domain(rows.map((r) => r.t)).range([ml, w - mr]).paddingInner(hasBar ? 0.15 : 0);
+    const cx = (t) => x(t) + x.bandwidth() / 2;
+    yGrid(svg, y, ticks, o.yfmt, ml, w - mr);
+    const marks = w < 460 ? ['09:30', '11:29', '15:00'] : ['09:30', '10:30', '11:29', '14:00', '15:00'];
+    marks.filter((t) => x(t) != null).forEach((t, i, a) => {
+      svg.append('text').attr('class', 'sx-tick').attr('x', cx(t)).attr('y', h - 6)
+        .attr('text-anchor', i === 0 ? 'start' : i === a.length - 1 ? 'end' : 'middle').text(t === '11:29' ? '11:30/13:00' : t);
+    });
+    if (o.ref != null) svg.append('line').attr('x1', ml).attr('x2', w - mr).attr('y1', y(o.ref)).attr('y2', y(o.ref)).style('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+    const y0 = y(Math.max(y.domain()[0], Math.min(0, y.domain()[1])));
+    o.series.forEach((s) => {
+      if (s.type === 'bar') {
+        svg.append('g').selectAll('rect').data(rows.filter((r) => s.val(r) != null)).join('rect')
+          .attr('x', (r) => x(r.t)).attr('width', Math.max(1, x.bandwidth()))
+          .attr('y', (r) => Math.min(y(s.val(r)), y0)).attr('height', (r) => Math.max(0.5, Math.abs(y(s.val(r)) - y0)))
+          .attr('rx', Math.min(2, x.bandwidth() / 2)).style('fill', (r) => (s.colorOf ? s.colorOf(r) : s.color));
+      } else {
+        const line = d3.line().defined((r) => s.val(r) != null && isFinite(s.val(r))).x((r) => cx(r.t)).y((r) => y(s.val(r)));
+        svg.append('path').datum(rows).attr('d', line).style('fill', 'none').style('stroke', s.color)
+          .attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+      }
+    });
+    const guide = svg.append('line').attr('y1', mt).attr('y2', h - mb).style('stroke', 'var(--cds-chart-axis)').style('display', 'none');
+    const dots = o.series.filter((s) => s.type !== 'bar').map((s) => svg.append('circle').attr('r', 4).style('fill', s.color).style('stroke', 'var(--color-panel)').attr('stroke-width', 2).style('display', 'none'));
+    const tt = tip(el.closest('.sx-card'));
+    svg.append('rect').attr('x', ml).attr('y', 0).attr('width', Math.max(0, w - mr - ml)).attr('height', h).style('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const [mx] = d3.pointer(ev);
+        const i = Math.max(0, Math.min(rows.length - 1, Math.floor((mx - ml) / x.step())));
+        const r = rows[i];
+        guide.attr('x1', cx(r.t)).attr('x2', cx(r.t)).style('display', null);
+        o.series.filter((s) => s.type !== 'bar').forEach((s, k) => {
+          const v = s.val(r);
+          dots[k].style('display', v == null ? 'none' : null).attr('cx', cx(r.t)).attr('cy', v == null ? 0 : y(v));
+        });
+        tt.show(ev, o.label ? o.label(r) : r.t, o.series.map((s) => [o.series.length > 1 ? s.name : s.name, s.val(r) == null ? '—' : s.fmt(s.val(r)), o.series.length > 1 ? (s.colorOf ? s.colorOf(r) : s.color) : null]));
+      })
+      .on('pointerleave', () => { guide.style('display', 'none'); dots.forEach((d) => d.style('display', 'none')); tt.hide(); });
+  }
+
+  // Horizontal bars. parts: [{name, val, color}] stacked from 0 (each part same sign)
+  function hbar(el, o) {
+    const rows = o.rows, rh = o.rowH || 18, w = W(el);
+    const mt = 4, mb = 20, h = rows.length * rh + mt + mb;
+    const svg = svgIn(el, h);
+    const ml = Math.ceil(d3.max(rows, (r) => textW(svg, o.label(r)))) + 10, mr = o.mr ?? (o.endLabel ? 52 : 10);
+    const tot = rows.map((r) => o.parts.reduce((a, p) => a + p.val(r), 0));
+    const x = d3.scaleLinear().domain([Math.min(0, d3.min(tot)), Math.max(0, d3.max(tot))]).nice(4).range([ml, w - mr]);
+    const y = d3.scaleBand().domain(rows.map((r, i) => i)).range([mt, h - mb]).paddingInner(0.22);
+    x.ticks(w < 420 ? 3 : 5).forEach((v) => {
+      svg.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', mt).attr('y2', h - mb).style('stroke', v === 0 ? 'var(--cds-chart-axis)' : 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'sx-tick').attr('x', x(v)).attr('y', h - 5).attr('text-anchor', 'middle').text(o.fmt(v));
+    });
+    const tt = tip(el.closest('.sx-card'));
+    rows.forEach((r, i) => {
+      const g = svg.append('g').style('cursor', o.click ? 'pointer' : null);
+      g.append('text').attr('class', 'sx-tick').attr('x', ml - 8).attr('y', y(i) + y.bandwidth() / 2).attr('dy', '0.32em').attr('text-anchor', 'end').text(o.label(r));
+      let acc = 0;
+      o.parts.forEach((p) => {
+        const v = p.val(r); if (!v) return;
+        const a = x(acc), b = x(acc + v); acc += v;
+        g.append('rect').attr('x', Math.min(a, b)).attr('width', Math.max(1, Math.abs(b - a) - (o.parts.length > 1 ? 1 : 0)))
+          .attr('y', y(i)).attr('height', y.bandwidth()).attr('rx', o.parts.length > 1 ? 1 : 3).style('fill', typeof p.color === 'function' ? p.color(r) : p.color);
+      });
+      if (o.endLabel) g.append('text').attr('class', 'sx-tick').attr('x', tot[i] < 0 ? x(tot[i]) - 4 : x(tot[i]) + 4).attr('y', y(i) + y.bandwidth() / 2).attr('dy', '0.32em')
+        .attr('text-anchor', tot[i] < 0 ? 'end' : 'start').text(o.endLabel(r));
+      g.append('rect').attr('x', 0).attr('width', w).attr('y', y(i) - 1).attr('height', y.step()).style('fill', 'transparent')
+        .on('pointermove', (ev) => tt.show(ev, o.tipHead ? o.tipHead(r) : o.label(r), o.tip(r)))
+        .on('pointerleave', () => tt.hide())
+        .on('click', () => o.click && o.click(r));
+    });
+  }
+
+  // diverging color: green (down) – neutral – red (up), resolved from tokens for canvas use
+  function divColor(maxAbs) {
+    const cs = getComputedStyle(root);
+    const up = cs.getPropertyValue('--sx-up').trim(), dn = cs.getPropertyValue('--sx-down').trim(), mid = cs.getPropertyValue('--sx-mid').trim();
+    const iu = d3.interpolateRgb(mid, up), id = d3.interpolateRgb(mid, dn);
+    const f = (v) => (v == null ? mid : v >= 0 ? iu(Math.min(1, v / maxAbs)) : id(Math.min(1, -v / maxAbs)));
+    f.ramp = (el, unit) => {
+      const a = document.createElement('b'), s = document.createElement('span'), z = document.createElement('b');
+      [a, z].forEach((x) => { x.style.fontWeight = '400'; });
+      a.textContent = '-' + maxAbs + unit; z.textContent = '+' + maxAbs + unit;
+      s.style.background = `linear-gradient(90deg, ${dn}, ${mid}, ${up})`;
+      el.replaceChildren(a, s, z);
+    };
+    return f;
+  }
+  const IND_ORDER = (stocks) => {
+    const ind = d3.rollups(stocks, (g) => d3.sum(g, (r) => r.amount), (r) => r.industry).sort((a, b) => b[1] - a[1]).map((d) => d[0]);
+    return ind;
+  };
+
+  function treemap() {
+    const el = $('#ch-tm');
+    if (!state(el, 'stocks') || !state(el, 'industry')) return;
+    const st = dash.data('stocks').data, ind = dash.data('industry').data;
+    const indRet = new Map(ind.map((r) => [r.industry, r]));
+    const w = W(el), h = w < 520 ? 520 : 460;
+    const svg = svgIn(el, h).attr('class', 'sx-tm');
+    const groups = d3.groups(st, (r) => r.industry).map(([name, children]) => ({ name, children }));
+    const rt = d3.hierarchy({ name: 'root', children: groups }).sum((d) => d.amount || 0).sort((a, b) => b.value - a.value);
+    d3.treemap().size([w, h]).paddingOuter(2).paddingTop(18).paddingInner(2).round(true)(rt);
+    const color = divColor(3);
+    color.ramp($('#rp-tm'), '%');
+    const tt = tip(el.closest('.sx-card'));
+    rt.children.forEach((g) => {
+      const info = indRet.get(g.data.name);
+      svg.append('rect').attr('x', g.x0).attr('y', g.y0).attr('width', g.x1 - g.x0).attr('height', g.y1 - g.y0).attr('rx', 3)
+        .style('fill', 'none').style('stroke', 'var(--color-border-line)');
+      if (g.x1 - g.x0 > 54) {
+        const label = g.data.name + (g.x1 - g.x0 > 130 && info ? '  ' + info.n + '只 ' + sgn(info.ew_ret_pct, d3.format('.2f')) + '%' : '');
+        svg.append('text').attr('class', 'sx-tick').attr('x', g.x0 + 5).attr('y', g.y0 + 13).style('fill', 'var(--color-fg)').text(label);
+      }
+    });
+    const leaves = svg.append('g').selectAll('g').data(rt.leaves()).join('g').style('cursor', 'pointer');
+    leaves.append('rect').attr('x', (d) => d.x0).attr('y', (d) => d.y0).attr('width', (d) => Math.max(0, d.x1 - d.x0)).attr('height', (d) => Math.max(0, d.y1 - d.y0)).attr('rx', 2)
+      .style('fill', (d) => color(d.data.ret_pct));
+    leaves.each(function (d) {
+      const cw = d.x1 - d.x0, ch = d.y1 - d.y0;
+      if (cw < 46 || ch < 30) return;
+      const strong = Math.abs(d.data.ret_pct) > 1.2;
+      const fill = strong ? '#ffffff' : 'var(--color-fg)';
+      const g = d3.select(this), cx = (d.x0 + d.x1) / 2, cy = (d.y0 + d.y1) / 2;
+      g.append('text').attr('x', cx).attr('y', cy - 2).attr('text-anchor', 'middle').style('fill', fill).style('font-size', cw > 90 && ch > 50 ? '13px' : '11px').text(d.data.name);
+      g.append('text').attr('x', cx).attr('y', cy + 13).attr('text-anchor', 'middle').style('fill', fill).style('font-size', '11px').style('font-variant-numeric', 'tabular-nums').text(sgn(d.data.ret_pct, d3.format('.2f')) + '%');
+    });
+    leaves.on('pointermove', (ev, d) => {
+      const r = d.data, i = indRet.get(r.industry);
+      tt.show(ev, r.code + ' ' + r.name + ' · ' + r.industry, [['涨跌', sgn(r.ret_pct, d3.format('.2f')) + '%'], ['成交额', f2(r.amount_yi) + ' 亿元'], ['主动净买入', sgn(r.net_buy_yi, f2) + ' 亿元'],
+        ['行业等权涨跌', i ? sgn(i.ew_ret_pct, d3.format('.2f')) + '%（' + i.n + ' 只）' : '—']]);
+    }).on('pointerleave', () => tt.hide()).on('click', (ev, d) => openStock(d.data.code));
+  }
+
+  function heatmap() {
+    const el = $('#ch-heat');
+    if (!state(el, 'minute') || !state(el, 'stocks')) return;
+    el.classList.remove('dash-skeleton');
+    const st = dash.data('stocks').data, mn = dash.data('minute').data;
+    const order = IND_ORDER(st);
+    const stocks = [...st].sort((a, b) => order.indexOf(a.industry) - order.indexOf(b.industry) || b.ret_pct - a.ret_pct);
+    const times = [...new Set(mn.map((r) => r.t))].sort();
+    const ti = new Map(times.map((t, i) => [t, i])), si = new Map(stocks.map((r, i) => [r.code, i]));
+    const grid = stocks.map(() => new Array(times.length).fill(null));
+    mn.forEach((r) => { const i = si.get(r.code); if (i != null) grid[i][ti.get(r.t)] = r; });
+    const w = W(el), rh = 12, mt = 4, mb = 22;
+    const measure = svgIn(el, 10);
+    const narrow = w < 520;
+    const indW = narrow ? 0 : Math.ceil(d3.max(order, (s) => textW(measure, s))) + 12;
+    const nameW = Math.ceil(d3.max(stocks, (r) => textW(measure, r.name))) + 10;
+    el.replaceChildren();
+    const ml = indW + nameW, mr = 4, h = mt + stocks.length * rh + mb;
+    const cw = (w - ml - mr) / times.length;
+    const dpr = window.devicePixelRatio || 1;
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+    el.append(cv);
+    const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+    const abs = mn.map((r) => Math.abs(r.ret_pct)).sort(d3.ascending);
+    const maxAbs = Math.max(0.5, Math.ceil(d3.quantile(abs, 0.98) * 2) / 2);
+    const color = divColor(maxAbs);
+    color.ramp($('#rp-heat'), '%');
+    const cs = getComputedStyle(root);
+    const probe = (v) => { const s = document.createElement('span'); s.style.color = `var(${v})`; root.append(s); const c = getComputedStyle(s).color; s.remove(); return c; };
+    const fg = probe('--color-fg'), muted = probe('--color-fg-muted'), line = probe('--color-border-line');
+    ctx.font = '11px ' + (cs.getPropertyValue('--font-anthropic-sans').trim() || 'sans-serif');
+    ctx.textBaseline = 'middle';
+    stocks.forEach((s, i) => {
+      const y = mt + i * rh;
+      for (let j = 0; j < times.length; j++) {
+        const r = grid[i][j];
+        ctx.fillStyle = color(r ? r.ret_pct : null);
+        ctx.fillRect(ml + j * cw, y, Math.ceil(cw + 0.5), rh - 1);
+      }
+      ctx.fillStyle = muted; ctx.textAlign = 'right';
+      ctx.fillText(s.name, ml - 6, y + rh / 2);
+      const first = i === 0 || stocks[i - 1].industry !== s.industry;
+      if (first && i > 0) { ctx.fillStyle = line; ctx.fillRect(0, y - 1, w, 1); }
+      if (first && indW) { ctx.fillStyle = fg; ctx.textAlign = 'left'; ctx.fillText(s.industry, 0, y + rh / 2); }
+    });
+    ctx.fillStyle = muted; ctx.textBaseline = 'alphabetic';
+    const marks = narrow ? ['09:30', '11:29', '15:00'] : ['09:30', '10:30', '11:29', '14:00', '15:00'];
+    marks.forEach((t, k) => {
+      const j = ti.get(t); if (j == null) return;
+      ctx.textAlign = k === 0 ? 'left' : k === marks.length - 1 ? 'right' : 'center';
+      ctx.fillText(t === '11:29' ? '11:30/13:00' : t, ml + (j + 0.5) * cw, h - 6);
+    });
+    const tt = tip(el.closest('.sx-card'));
+    cv.addEventListener('pointermove', (ev) => {
+      const b = cv.getBoundingClientRect();
+      const x = ev.clientX - b.left, y = ev.clientY - b.top;
+      const i = Math.floor((y - mt) / rh), j = Math.floor((x - ml) / cw);
+      if (i < 0 || i >= stocks.length || j < 0 || j >= times.length) { tt.hide(); return; }
+      const r = grid[i][j], s = stocks[i];
+      tt.show(ev, s.name + ' · ' + s.industry + ' · ' + times[j], r ? [['涨跌', sgn(r.ret_pct, d3.format('.2f')) + '%'], ['成交价', f2(r.price)], ['成交额', f1(r.amount / 1e4) + ' 万元']] : [['', '无数据']]);
+    });
+    cv.addEventListener('pointerleave', () => tt.hide());
+    cv.addEventListener('click', (ev) => {
+      const b = cv.getBoundingClientRect(); const i = Math.floor((ev.clientY - b.top - mt) / rh);
+      if (stocks[i]) openStock(stocks[i].code);
+    });
+  }
+
+  // ---------- overview ----------
+  function header() {
+    const k = dash.data('kpi');
+    if (k.status !== 'ok' || !k.data.length) return;
+    const d = k.data[0];
+    root.querySelectorAll('[data-source="kpi"]').forEach((el) => {
+      const f = el.dataset.field, v = d[f];
+      el.textContent = ['ew_ret_pct', 'net_buy_yi', 'xlarge_net_yi'].includes(f) ? sgn(v, f === 'ew_ret_pct' ? d3.format('.2f') : f2) : f === 'up' || f === 'down' ? String(v) : f === 'amount_yi' ? f2(v) : f1(v);
+      el.classList.remove('up', 'down');
+      if (['ew_ret_pct', 'net_buy_yi', 'xlarge_net_yi'].includes(f)) el.classList.add(dir(v));
+    });
+  }
+
+  function overview() {
+    const mm = dash.data('market_minute');
+    const elEw = $('#ch-ew'), elAmt = $('#ch-amt');
+    if (state(elEw, 'market_minute') && state(elAmt, 'market_minute')) {
+      const rows = mm.data;
+      timeChart(elEw, { rows, zero: true, yfmt: (v) => d3.format('.1f')(v) + '%', series: [{ name: '等权涨跌', color: C(0), val: (r) => r.ew_ret_pct, fmt: (v) => sgn(v, d3.format('.3f')) + '%' }] });
+      const auction = (r) => r.t === '09:25' || r.t === '15:00';
+      legend($('#lg-amt'), [['连续竞价', C(0)], ['集合竞价（09:25 开盘、15:00 收盘）', C(1)]]);
+      timeChart(elAmt, { rows, yfmt: (v) => f0(v / 1e8), series: [{ name: '成交额', type: 'bar', color: C(0), colorOf: (r) => (auction(r) ? C(1) : C(0)), val: (r) => r.amount, fmt: (v) => f2(v / 1e8) + ' 亿元' }] });
+    }
+    const elB = $('#ch-breadth');
+    if (state(elB, 'market_minute')) {
+      legend($('#lg-breadth'), [['上涨家数', UP], ['下跌家数', DOWN]]);
+      timeChart(elB, { rows: mm.data, yfmt: f0,
+        label: (r) => r.t + '  平盘 ' + r.flat_count,
+        series: [{ name: '上涨', color: UP, val: (r) => r.up_count, fmt: (v) => v + ' 只' }, { name: '下跌', color: DOWN, val: (r) => r.down_count, fmt: (v) => v + ' 只' }] });
+    }
+    treemap();
+    heatmap();
+    const elCc = $('#ch-cumcls');
+    if (state(elCc, 'flow_minute')) {
+      const ser = [['超大单 ≥100万', 'xlarge'], ['大单 20–100万', 'large'], ['中单 4–20万', 'medium'], ['小单 <4万', 'small']];
+      legend($('#lg-cumcls'), ser.map(([n], i) => [n, C(i)]));
+      timeChart(elCc, { rows: dash.data('flow_minute').data, h: 260, zero: true, yfmt: (v) => f0(v),
+        series: ser.map(([n, k], i) => ({ name: n, color: C(i), val: (r) => r['cum_' + k + '_yi'], fmt: (v) => sgn(v, f2) + ' 亿元' })) });
+    }
+    const st = dash.data('stocks');
+    const elRet = $('#ch-ret');
+    if (state(elRet, 'stocks')) {
+      const rows = [...st.data].sort((a, b) => b.ret_pct - a.ret_pct);
+      hbar(elRet, { rows, rowH: 17, label: (r) => r.name, fmt: (v) => v + '%', endLabel: (r) => sgn(r.ret_pct, d3.format('.2f')),
+        parts: [{ val: (r) => r.ret_pct, color: (r) => (r.ret_pct >= 0 ? UP : DOWN) }],
+        tipHead: (r) => r.code + ' ' + r.name, tip: (r) => [['涨跌', sgn(r.ret_pct, d3.format('.2f')) + '%'], ['收盘', f2(r.close)], ['成交额', f2(r.amount_yi) + ' 亿元']],
+        click: (r) => openStock(r.code) });
+    }
+    const elFlow = $('#ch-flow');
+    if (state(elFlow, 'flow_cls')) {
+      hbar(elFlow, { rows: dash.data('flow_cls').data, rowH: 26, label: (r) => r.cls, fmt: (v) => f0(v), endLabel: (r) => sgn(r.net_yi, f2),
+        parts: [{ val: (r) => r.net_yi, color: (r) => (r.net_yi >= 0 ? UP : DOWN) }],
+        tip: (r) => [['净买入', sgn(r.net_yi, f2) + ' 亿元']] });
+    }
+    table();
+  }
+
+  function table() {
+    const tb = $('#tbl tbody');
+    const st = dash.data('stocks');
+    if (st.status !== 'ok') { tb.replaceChildren(); return; }
+    const q = $('#sx-q').value.trim();
+    const rows = st.data.filter((r) => !q || r.code.includes(q) || r.name.includes(q))
+      .sort((a, b) => (typeof a[sortKey] === 'string' ? a[sortKey].localeCompare(b[sortKey]) : a[sortKey] - b[sortKey]) * sortDir);
+    root.querySelectorAll('#tbl th').forEach((th) => th.setAttribute('aria-sort', th.dataset.field === sortKey ? (sortDir > 0 ? 'ascending' : 'descending') : 'none'));
+    const cols = [
+      ['code', (r) => r.code], ['name', (r) => r.name], ['close', (r) => f2(r.close)],
+      ['ret_pct', (r) => sgn(r.ret_pct, d3.format('.3f')), (r) => dir(r.ret_pct)], ['amount_yi', (r) => f2(r.amount_yi)],
+      ['net_buy_yi', (r) => sgn(r.net_buy_yi, f2), (r) => dir(r.net_buy_yi)], ['net_xlarge_yi', (r) => sgn(r.net_xlarge_yi, f2), (r) => dir(r.net_xlarge_yi), 1],
+      ['trades', (r) => f0(r.trades), null, 1], ['cancel_pct', (r) => f1(r.cancel_pct), null, 1], ['spread_bps', (r) => f2(r.spread_bps), null, 1],
+    ];
+    tb.replaceChildren(...rows.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.code; tr.tabIndex = 0;
+      cols.forEach(([, f, cls, narrow]) => { const td = document.createElement('td'); td.textContent = f(r); if (cls && cls(r)) td.className = cls(r); if (narrow) td.classList.add('sx-hide-narrow'); tr.append(td); });
+      return tr;
+    }));
+  }
+  $('#tbl thead').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = b.dataset.k; sortDir = sortKey === k ? -sortDir : (k === 'code' || k === 'name' ? 1 : -1); sortKey = k; table();
+  });
+  $('#tbl tbody').addEventListener('click', (e) => { const tr = e.target.closest('tr[data-key]'); if (tr) openStock(tr.dataset.key); });
+  $('#tbl tbody').addEventListener('keydown', (e) => { const tr = e.target.closest('tr[data-key]'); if (tr && e.key === 'Enter') openStock(tr.dataset.key); });
+  $('#sx-q').addEventListener('input', table);
+
+  // ---------- stock ----------
+  const cur = () => dash.params().stock || '600519';
+  function openStock(code) { dash.setParams({ stock: code }); show('stock'); }
+  $('#sx-stock').addEventListener('change', (e) => dash.setParams({ stock: e.target.value }));
+
+  function stockPage() {
+    const st = dash.data('stocks');
+    const sel = $('#sx-stock');
+    const code = cur();
+    if (st.status === 'ok') {
+      if (sel.options.length !== st.data.length) sel.replaceChildren(...st.data.map((r) => new Option(r.code + ' ' + r.name, r.code)));
+      sel.value = code;
+      const s = st.data.find((r) => r.code === code);
+      if (s) {
+        root.querySelectorAll('#stock-kpis [data-source="stocks"]').forEach((el) => {
+          const f = el.dataset.field, v = s[f];
+          el.setAttribute('data-where', 'code=' + code);
+          el.textContent = f === 'ret_pct' ? sgn(v, d3.format('.3f')) : f === 'net_buy_yi' ? sgn(v, f2) : f2(v);
+          el.classList.remove('up', 'down');
+          if (f === 'ret_pct' || f === 'net_buy_yi') el.classList.add(dir(v));
+        });
+        $('#sk-pre').textContent = '昨收 ' + f2(s.pre_close) + '，开盘 ' + f2(s.open);
+        $('#sk-range').textContent = '最高 ' + f2(s.high) + ' / 最低 ' + f2(s.low) + '，振幅 ' + f2(s.range_pct) + '%';
+        $('#sk-trades').textContent = f0(s.trades) + ' 笔，笔均 ' + f1(s.avg_trade_amt / 1e4) + ' 万元';
+        $('#sk-xl').textContent = '超大单 ' + sgn(s.net_xlarge_yi, f2) + '，小单 ' + sgn(s.net_small_yi, f2);
+        $('#sk-tick').textContent = '约 ' + f2(s.spread_ticks) + ' 个最小价位，撤单率 ' + f1(s.cancel_pct) + '%';
+      }
+    }
+    const mn = dash.data('minute');
+    const elPx = $('#ch-px'), elBs = $('#ch-bs'), elSpr = $('#ch-spr');
+    const okM = [state(elPx, 'minute'), state(elBs, 'minute'), state(elSpr, 'minute')].every(Boolean);
+    if (okM) {
+      const rows = mn.data.filter((r) => r.code === code);
+      const s = st.status === 'ok' ? st.data.find((r) => r.code === code) : null;
+      legend($('#lg-px'), [['成交价', C(0)], ['均价 VWAP', C(1)], ['昨收', 'var(--cds-chart-reference)']]);
+      const pf = s && s.close >= 100 ? f2 : d3.format(',.3f');
+      timeChart(elPx, { rows, h: 260, ref: s ? s.pre_close : null, yfmt: (v) => d3.format(',')(v),
+        label: (r) => r.t + '  ' + sgn(r.ret_pct, d3.format('.2f')) + '%',
+        series: [{ name: '成交价', color: C(0), val: (r) => r.price, fmt: pf }, { name: 'VWAP', color: C(1), val: (r) => r.vwap, fmt: pf }] });
+      const cont = rows.filter((r) => r.t !== '09:25' && r.t !== '15:00');
+      timeChart(elBs, { rows: cont, zero: true, yfmt: (v) => f0(v / 1e4),
+        series: [{ name: '主动买', type: 'bar', color: UP, val: (r) => r.buy_amt, fmt: (v) => f1(v / 1e4) + ' 万元' },
+                 { name: '主动卖', type: 'bar', color: DOWN, val: (r) => -r.sell_amt, fmt: (v) => f1(-v / 1e4) + ' 万元' }] });
+      timeChart(elSpr, { rows: cont, yfmt: (v) => d3.format('.1f')(v),
+        series: [{ name: '价差', color: C(0), val: (r) => r.spread_bps, fmt: (v) => f2(v) + ' bp' }] });
+    }
+    const elCum = $('#ch-cum');
+    if (state(elCum, 'cum_flow')) {
+      const rows = dash.data('cum_flow').data.filter((r) => r.code === code && r.t !== '09:25' && r.t !== '15:00');
+      timeChart(elCum, { rows, zero: true, yfmt: (v) => f0(v),
+        series: [{ name: '累计净买入', color: C(0), val: (r) => r.cum_net_wan, fmt: (v) => sgn(v, f0) + ' 万元' }] });
+    }
+    const elBook = $('#ch-book');
+    if (state(elBook, 'depth')) {
+      const b = dash.data('depth').data.filter((r) => r.code === code);
+      const rows = [...b.filter((r) => r.side === 'ask').sort((a, c) => c.level - a.level), ...b.filter((r) => r.side === 'bid').sort((a, c) => a.level - c.level)];
+      hbar(elBook, { rows, label: (r) => (r.side === 'ask' ? '卖' : '买') + r.level, fmt: (v) => f0(v), endLabel: (r) => f0(Math.round(r.avg_lots)),
+        parts: [{ val: (r) => r.avg_lots, color: (r) => (r.side === 'ask' ? DOWN : UP) }],
+        tip: (r) => [['平均挂单', f1(r.avg_lots) + ' 手'], ['快照数', f0(r.snapshots)]] });
+    }
+    const elVap = $('#ch-vap');
+    if (state(elVap, 'vap')) {
+      const rows = dash.data('vap').data.filter((r) => r.code === code).sort((a, c) => c.price_lo - a.price_lo);
+      const pf = rows.length && rows[0].price_lo >= 100 ? f2 : d3.format(',.3f');
+      hbar(elVap, { rows, rowH: Math.max(10, Math.min(16, 380 / Math.max(rows.length, 1))), label: (r) => pf(r.price_lo), fmt: (v) => f0(v),
+        parts: [{ val: (r) => r.buy_amt / 1e4, color: UP }, { val: (r) => r.sell_amt / 1e4, color: DOWN }, { val: (r) => (r.amount - r.buy_amt - r.sell_amt) / 1e4, color: MUTED }],
+        tipHead: (r) => pf(r.price_lo) + ' – ' + pf(r.price_hi),
+        tip: (r) => [['主动买', f0(r.buy_amt / 1e4) + ' 万元', UP], ['主动卖', f0(r.sell_amt / 1e4) + ' 万元', DOWN], ['集合竞价', f0((r.amount - r.buy_amt - r.sell_amt) / 1e4) + ' 万元', MUTED]] });
+    }
+  }
+
+  // ---------- micro ----------
+  function micro() {
+    const mm = dash.data('market_minute');
+    const elOc = $('#ch-oc'), elM = $('#ch-mspr');
+    if (state(elOc, 'market_minute') && state(elM, 'market_minute')) {
+      const rows = mm.data.filter((r) => r.t !== '09:25');
+      legend($('#lg-oc'), [['新增委托', C(0)], ['撤单', C(1)]]);
+      timeChart(elOc, { rows, yfmt: (v) => f0(v / 1e4) + '万',
+        series: [{ name: '新增', color: C(0), val: (r) => r.orders, fmt: f0 }, { name: '撤单', color: C(1), val: (r) => r.cancels, fmt: f0 }] });
+      timeChart(elM, { rows: rows.filter((r) => r.spread_bps != null), yfmt: (v) => d3.format('.1f')(v),
+        series: [{ name: '平均价差', color: C(0), val: (r) => r.spread_bps, fmt: (v) => f2(v) + ' bp' }] });
+    }
+    const elO = $('#ch-osz');
+    if (state(elO, 'order_size')) {
+      const d = dash.data('order_size').data;
+      const buckets = [...new Map(d.map((r) => [r.order, r.size_bucket])).entries()].sort((a, b) => a[0] - b[0]).map((e) => e[1]);
+      const w = W(elO), h = 240, svg = svgIn(elO, h);
+      const y = d3.scaleLinear().domain([0, d3.max(d, (r) => r.orders)]).nice(4);
+      const ticks = y.ticks(4);
+      const ml = Math.ceil(d3.max(ticks, (t) => textW(svg, f0(t / 1e4)))) + 10, mb = w < 520 ? 40 : 22;
+      y.range([h - mb, 8]);
+      const x = d3.scaleBand().domain(buckets).range([ml, w - 4]).paddingInner(0.25);
+      const xs = d3.scaleBand().domain(['buy', 'sell']).range([0, x.bandwidth()]).paddingInner(0.12);
+      yGrid(svg, y, ticks, (v) => f0(v / 1e4), ml, w - 4);
+      legend($('#lg-osz'), [['买单', UP], ['卖单', DOWN]]);
+      const tt = tip(elO.closest('.sx-card'));
+      buckets.forEach((bk) => {
+        const lab = svg.append('text').attr('class', 'sx-tick').attr('x', x(bk) + x.bandwidth() / 2).attr('y', h - mb + 14).attr('text-anchor', w < 520 ? 'end' : 'middle').text(bk);
+        if (w < 520) lab.attr('transform', `rotate(-35 ${x(bk) + x.bandwidth() / 2} ${h - mb + 14})`);
+        const g = svg.append('g');
+        d.filter((r) => r.size_bucket === bk).forEach((r) => {
+          g.append('rect').attr('x', x(bk) + xs(r.side)).attr('width', xs.bandwidth()).attr('y', y(r.orders)).attr('height', y(0) - y(r.orders)).attr('rx', 2).style('fill', r.side === 'buy' ? UP : DOWN);
+        });
+        g.append('rect').attr('x', x(bk)).attr('width', x.bandwidth()).attr('y', 0).attr('height', h - mb).style('fill', 'transparent')
+          .on('pointermove', (ev) => {
+            const b = d.find((r) => r.size_bucket === bk && r.side === 'buy'), s = d.find((r) => r.size_bucket === bk && r.side === 'sell');
+            tt.show(ev, bk, [['买单', f0(b.orders) + ' 笔', UP], ['卖单', f0(s.orders) + ' 笔', DOWN], ['合计股数', f1((b.shares + s.shares) / 1e8) + ' 亿股']]);
+          })
+          .on('pointerleave', () => tt.hide());
+      });
+    }
+  }
+
+  // ---------- insights ----------
+  // x/y chart with dot or line layers; axes may be log
+  function plotXY(el, o) {
+    const w = W(el), h = o.h || 280, svg = svgIn(el, h);
+    const all = o.layers.flatMap((L) => L.rows.map((r) => [L.x(r), L.y(r)]));
+    const mk = (ax, vals) => { const s = (ax.log ? d3.scaleLog() : d3.scaleLinear()).domain(ax.domain || d3.extent(vals)); if (!ax.domain) s.nice(); return s; };
+    const x = mk(o.x, all.map((d) => d[0])), y = mk(o.y, all.map((d) => d[1]));
+    const inside = (s, v) => v >= Math.min(...s.domain()) && v <= Math.max(...s.domain());
+    const yt = (o.y.ticks || y.ticks(4)).filter((v) => inside(y, v));
+    const ml = Math.ceil(d3.max(yt, (v) => textW(svg, o.y.fmt(v)))) + 10, mr = 12, mt = 8, mb = 22;
+    y.range([h - mb, mt]); x.range([ml, w - mr]);
+    yGrid(svg, y, yt, o.y.fmt, ml, w - mr);
+    const xt = (o.x.ticks || x.ticks(w < 420 ? 3 : 5)).filter((v) => inside(x, v));
+    xt.forEach((v, i) => {
+      svg.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', mt).attr('y2', h - mb).style('stroke', v === 0 ? 'var(--cds-chart-axis)' : 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'sx-tick').attr('x', x(v)).attr('y', h - 6).attr('text-anchor', i === xt.length - 1 && x(v) > w - 30 ? 'end' : 'middle').text(o.x.fmt(v));
+    });
+    const tt = tip(el.closest('.sx-card'));
+    o.layers.forEach((L) => {
+      const col = (r) => (typeof L.color === 'function' ? L.color(r) : L.color);
+      if (L.type === 'line') {
+        svg.append('path').datum(L.rows).attr('d', d3.line().x((r) => x(L.x(r))).y((r) => y(L.y(r))))
+          .style('fill', 'none').style('stroke', L.color).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+      }
+      const g = svg.append('g');
+      g.selectAll('circle.v').data(L.rows).join('circle').attr('class', 'v').attr('cx', (r) => x(L.x(r))).attr('cy', (r) => y(L.y(r)))
+        .attr('r', L.type === 'line' ? 3.5 : 5).style('fill', col).style('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+      g.selectAll('circle.hit').data(L.rows).join('circle').attr('class', 'hit').attr('cx', (r) => x(L.x(r))).attr('cy', (r) => y(L.y(r)))
+        .attr('r', 10).style('fill', 'transparent').style('cursor', o.click ? 'pointer' : null)
+        .on('pointermove', (ev, r) => tt.show(ev, o.tipHead(r, L), o.tip(r, L)))
+        .on('pointerleave', () => tt.hide())
+        .on('click', (ev, r) => o.click && o.click(r));
+    });
+  }
+
+  function fillMarks(id, fmt) {
+    const d = dash.data(id);
+    if (d.status !== 'ok') return;
+    root.querySelectorAll(`#insights [data-source="${id}"][data-field]`).forEach((el) => {
+      const f = el.dataset.field;
+      let row = d.data[0];
+      if (el.dataset.where) {
+        const q = new URLSearchParams(el.dataset.where);
+        row = d.data.find((r) => [...q.entries()].every(([k, v]) => String(r[k]) === v));
+      }
+      if (row) el.textContent = fmt ? fmt(f, row[f]) : String(row[f]);
+    });
+  }
+
+  function insights() {
+    fillMarks('path', (f, v) => (f === 'low_t' ? v : String(v)));
+    fillMarks('xs_corr'); fillMarks('concentration'); fillMarks('tick'); fillMarks('lifetime_stats');
+
+    const elP = $('#ci-path');
+    if (state(elP, 'market_minute')) {
+      timeChart(elP, { rows: dash.data('market_minute').data, zero: true, yfmt: (v) => d3.format('.1f')(v) + '%',
+        series: [{ name: '等权涨跌', color: C(0), val: (r) => r.ew_ret_pct, fmt: (v) => sgn(v, d3.format('.3f')) + '%' }] });
+    }
+    const elSn = $('#ci-size-net');
+    if (state(elSn, 'xs_corr')) {
+      const rows = dash.data('xs_corr').data.filter((r) => r.kind === 'size');
+      const lab = (r) => r.signal.split(' ')[0];
+      hbar(elSn, { rows, rowH: 26, label: lab, fmt: (v) => f0(v), endLabel: (r) => sgn(r.net_yi, f2),
+        parts: [{ val: (r) => r.net_yi, color: (r) => (r.net_yi >= 0 ? UP : DOWN) }], tipHead: (r) => r.signal, tip: (r) => [['净买入', sgn(r.net_yi, f2) + ' 亿元']] });
+    }
+    const elI = $('#ci-imb');
+    if (state(elI, 'stocks')) {
+      const rows = dash.data('stocks').data;
+      plotXY(elI, { x: { fmt: (v) => d3.format('.2f')(v) }, y: { fmt: (v) => d3.format('.1f')(v) + '%' },
+        layers: [{ rows, x: (r) => r.imbalance, y: (r) => r.ret_pct, color: (r) => (r.ret_pct >= 0 ? UP : DOWN) }],
+        tipHead: (r) => r.code + ' ' + r.name, tip: (r) => [['盘口不平衡', d3.format('.3f')(r.imbalance)], ['涨跌', sgn(r.ret_pct, d3.format('.2f')) + '%']],
+        click: (r) => openStock(r.code) });
+    }
+    const elT = $('#ci-tick');
+    if (state(elT, 'stocks')) {
+      const rows = dash.data('stocks').data;
+      legend($('#lg-tick'), [['价差 ≤1.1 个最小价位', C(0)], ['其他', C(1)]]);
+      plotXY(elT, { x: { log: true, domain: [d3.min(rows, (r) => r.close) * 0.8, d3.max(rows, (r) => r.close) * 1.25], ticks: [2, 5, 10, 20, 50, 100, 200, 500, 1000], fmt: (v) => v + ' 元' }, y: { log: true, domain: [d3.min(rows, (r) => r.spread_bps) * 0.8, d3.max(rows, (r) => r.spread_bps) * 1.25], ticks: [1, 2, 5, 10, 20, 50], fmt: (v) => v + ' bp' },
+        layers: [{ rows, x: (r) => r.close, y: (r) => r.spread_bps, color: (r) => (r.spread_ticks <= 1.1 ? C(0) : C(1)) }],
+        tipHead: (r) => r.code + ' ' + r.name, tip: (r) => [['收盘价', f2(r.close) + ' 元'], ['平均价差', f2(r.spread_bps) + ' bp'], ['折合最小价位', f2(r.spread_ticks) + ' 个']],
+        click: (r) => openStock(r.code) });
+    }
+    const elL = $('#ci-life');
+    if (state(elL, 'lifetime')) {
+      const d = dash.data('lifetime').data;
+      const boards = ['主板', '科创板'];
+      legend($('#lg-life'), boards.map((b, i) => [b, C(i)]));
+      const sec = (v) => (v < 60 ? v + ' 秒' : v < 3600 ? v / 60 + ' 分' : v / 3600 + ' 时');
+      plotXY(elL, { x: { log: true, domain: [0.5, 7200], ticks: [1, 10, 60, 600, 3600], fmt: sec }, y: { domain: [0, 100], ticks: [0, 25, 50, 75, 100], fmt: (v) => v + '%' },
+        layers: boards.map((b, i) => ({ type: 'line', rows: d.filter((r) => r.board === b), x: (r) => r.seconds, y: (r) => r.cum_share_pct, color: C(i), name: b })),
+        tipHead: (r) => r.board + ' · ' + sec(r.seconds) + '内', tip: (r) => [['已撤销', f1(r.cum_share_pct) + '%']] });
+    }
+  }
+
+  // ---------- factors ----------
+  let facSeg = 'holdout';
+  root.querySelector('#fac-heat .sx-seg').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-seg]'); if (!b) return;
+    facSeg = b.dataset.seg;
+    root.querySelectorAll('#fac-heat .sx-seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    factors();
+  });
+  function icColor(maxAbs) {
+    const cs = getComputedStyle(root);
+    const pos = cs.getPropertyValue('--sx-pos').trim(), neg = cs.getPropertyValue('--sx-neg').trim(), mid = cs.getPropertyValue('--sx-mid').trim();
+    const ip = d3.interpolateRgb(mid, pos), ineg = d3.interpolateRgb(mid, neg);
+    const f = (v) => (v >= 0 ? ip(Math.min(1, v / maxAbs)) : ineg(Math.min(1, -v / maxAbs)));
+    f.ramp = (el) => {
+      const a = document.createElement('b'), s = document.createElement('span'), z = document.createElement('b');
+      [a, z].forEach((x) => { x.style.fontWeight = '400'; });
+      a.textContent = '-' + maxAbs; z.textContent = '+' + maxAbs;
+      s.style.background = `linear-gradient(90deg, ${neg}, ${mid}, ${pos})`;
+      el.replaceChildren(a, s, z);
+    };
+    return f;
+  }
+  const hs = (h) => (h < 60 ? h + '秒' : h / 60 + '分');
+  function factors() {
+    fillFac('composite_ic'); fillFac('q_spread');
+    const elH = $('#cf-heat');
+    if (state(elH, 'factor_ic')) {
+      const d = dash.data('factor_ic').data;
+      const fs = [...new Map(d.map((r) => [r.factor_order, r.factor])).entries()].sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+      const H = [...new Set(d.map((r) => r.horizon_s))].filter((h) => h <= 60).sort((a, b) => a - b);
+      const w = W(elH), rh = 30, mt = 4, mb = 22, h = mt + fs.length * rh + mb;
+      const svg = svgIn(elH, h);
+      const ml = Math.ceil(d3.max(fs, (f) => textW(svg, f))) + 12;
+      const x = d3.scaleBand().domain(H).range([ml, w - 4]).paddingInner(0.04);
+      const color = icColor(0.25);
+      color.ramp($('#rp-fac'));
+      const key = 'ic_' + facSeg;
+      const tt = tip(elH.closest('.sx-card'));
+      const segName = { train: '训练段', valid: '验证段', holdout: '尾段留出' };
+      fs.forEach((f, i) => {
+        const y = mt + i * rh;
+        svg.append('text').attr('class', 'sx-tick').attr('x', ml - 8).attr('y', y + rh / 2).attr('dy', '0.32em').attr('text-anchor', 'end').style('fill', 'var(--color-fg)').text(f);
+        H.forEach((hh) => {
+          const r = d.find((z) => z.factor === f && z.horizon_s === hh);
+          const v = r[key];
+          svg.append('rect').attr('x', x(hh)).attr('y', y + 1).attr('width', x.bandwidth()).attr('height', rh - 2).attr('rx', 2).style('fill', color(v));
+          if (x.bandwidth() > 30) svg.append('text').attr('x', x(hh) + x.bandwidth() / 2).attr('y', y + rh / 2).attr('dy', '0.32em').attr('text-anchor', 'middle')
+            .style('font-size', '11px').style('font-variant-numeric', 'tabular-nums').style('pointer-events', 'none')
+            .style('fill', Math.abs(v) > 0.15 ? '#ffffff' : 'var(--color-fg)').text(d3.format('.2f')(v));
+          svg.append('rect').attr('x', x(hh)).attr('y', y).attr('width', x.bandwidth()).attr('height', rh).style('fill', 'transparent')
+            .on('pointermove', (ev) => tt.show(ev, f + ' · ' + hs(hh), ['train', 'valid', 'holdout'].map((s) => [segName[s], d3.format('.3f')(r['ic_' + s])])))
+            .on('pointerleave', () => tt.hide());
+        });
+      });
+      H.forEach((hh) => svg.append('text').attr('class', 'sx-tick').attr('x', x(hh) + x.bandwidth() / 2).attr('y', h - 6).attr('text-anchor', 'middle').text(hs(hh)));
+    }
+    const elF = $('#cf-horizon');
+    if (state(elF, 'factor_ic') && state(elF, 'composite_ic')) {
+      const d = dash.data('factor_ic').data, c = dash.data('composite_ic').data;
+      const pick = ['十档加权量差', '买卖一档量差', '微价偏离', '近5秒价格动量'];
+      const H = c.map((r) => r.horizon_s).filter((h) => h <= 60).sort((a, b) => a - b);
+      const series = [{ name: '12因子组合（岭回归）', rows: H.map((h) => ({ t: hs(h), v: c.find((r) => r.horizon_s === h).ic_holdout })) },
+        ...pick.map((f) => ({ name: f, rows: H.map((h) => ({ t: hs(h), v: d.find((r) => r.factor === f && r.horizon_s === h).ic_holdout })) }))];
+      legend($('#lg-fh'), series.map((s, i) => [s.name, C(i)]));
+      const rows = H.map((h, i) => ({ t: hs(h), i }));
+      categoryLines(elF, { cats: rows.map((r) => r.t), series: series.map((s, i) => ({ name: s.name, color: C(i), vals: s.rows.map((r) => r.v) })), yfmt: (v) => d3.format('.2f')(v), vfmt: (v) => d3.format('.3f')(v) });
+    }
+    const elQ = $('#cf-q');
+    if (state(elQ, 'composite_quintile')) {
+      const d = dash.data('composite_quintile').data;
+      const segs = ['验证段', '尾段留出'];
+      legend($('#lg-fq'), segs.map((s, i) => [s, C(i)]));
+      categoryLines(elQ, { cats: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'], series: segs.map((s, i) => ({ name: s, color: C(i), vals: [1, 2, 3, 4, 5].map((q) => d.find((r) => r.segment === s && r.quintile === q).ret_bps) })),
+        yfmt: (v) => d3.format('.1f')(v) + ' bp', vfmt: (v) => sgn(v, d3.format('.2f')) + ' bp', zero: true });
+    }
+  }
+  function fillFac(id) {
+    const d = dash.data(id);
+    if (d.status !== 'ok') return;
+    root.querySelectorAll(`#factors [data-source="${id}"][data-field]`).forEach((el) => {
+      const q = new URLSearchParams(el.dataset.where || '');
+      const row = d.data.find((r) => [...q.entries()].every(([k, v]) => String(r[k]) === v));
+      if (row) el.textContent = String(row[el.dataset.field]);
+    });
+  }
+  // lines over ordered categories with hover guide
+  function categoryLines(el, o) {
+    const w = W(el), h = o.h || 240, svg = svgIn(el, h);
+    const vals = o.series.flatMap((s) => s.vals).concat(o.zero ? [0] : []);
+    const y = d3.scaleLinear().domain(d3.extent(vals)).nice(4);
+    const yt = y.ticks(4);
+    const ml = Math.ceil(d3.max(yt, (v) => textW(svg, o.yfmt(v)))) + 10, mr = 14, mt = 8, mb = 22;
+    y.range([h - mb, mt]);
+    const x = d3.scalePoint().domain(o.cats).range([ml + 6, w - mr]);
+    yGrid(svg, y, yt, o.yfmt, ml, w - mr);
+    o.cats.forEach((c) => svg.append('text').attr('class', 'sx-tick').attr('x', x(c)).attr('y', h - 6).attr('text-anchor', 'middle').text(c));
+    o.series.forEach((s) => {
+      svg.append('path').datum(s.vals).attr('d', d3.line().x((v, i) => x(o.cats[i])).y((v) => y(v)))
+        .style('fill', 'none').style('stroke', s.color).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+      svg.append('g').selectAll('circle').data(s.vals).join('circle').attr('cx', (v, i) => x(o.cats[i])).attr('cy', (v) => y(v)).attr('r', 3.5)
+        .style('fill', s.color).style('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+    });
+    const guide = svg.append('line').attr('y1', mt).attr('y2', h - mb).style('stroke', 'var(--cds-chart-axis)').style('display', 'none');
+    const tt = tip(el.closest('.sx-card'));
+    svg.append('rect').attr('x', ml).attr('y', 0).attr('width', Math.max(0, w - ml)).attr('height', h).style('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const [mx] = d3.pointer(ev);
+        const i = d3.minIndex(o.cats, (c) => Math.abs(x(c) - mx));
+        guide.attr('x1', x(o.cats[i])).attr('x2', x(o.cats[i])).style('display', null);
+        tt.show(ev, o.cats[i], o.series.map((s) => [s.name, o.vfmt(s.vals[i]), s.color]));
+      })
+      .on('pointerleave', () => { guide.style('display', 'none'); tt.hide(); });
+  }
+
+  // ---------- tabs ----------
+  function show(name) {
+    tab = name;
+    root.querySelectorAll('.sx-tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+    root.querySelectorAll('.sx-page').forEach((p) => { p.style.display = p.id === name ? 'grid' : 'none'; });
+    dash.setLink(name);
+    draw();
+  }
+  root.querySelector('.sx-tabs').addEventListener('click', (e) => { const b = e.target.closest('button[data-tab]'); if (b) show(b.dataset.tab); });
+  function draw() {
+    header();
+    if (tab === 'overview') overview(); else if (tab === 'stock') stockPage(); else if (tab === 'insights') insights(); else if (tab === 'factors') factors(); else micro();
+  }
+  dash.onData(draw);
+  // canvas and treemap colors are resolved from tokens, so redraw on theme change
+  new MutationObserver(() => draw()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => draw());
+  const named = location.hash.slice(1);
+  if (['overview', 'stock', 'micro', 'insights', 'factors'].includes(named)) show(named);
+})();
+</script>
